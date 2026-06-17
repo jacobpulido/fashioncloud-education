@@ -35,9 +35,8 @@ model usuarios {
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
   deleted_at      DateTime? @db.Timestamptz()
-  
-  institucion     instituciones @relation(fields: [institucion_id], references: [id])
-  
+
+
   @@unique([institucion_id, email])
   @@index([institucion_id])
 }
@@ -47,36 +46,29 @@ model roles {
   clave       String   @unique
   nombre      String
   descripcion String?
-  
-  rol_permisos     rol_permisos[]
-  usuario_roles    usuario_roles[]
+
 }
 
 model permisos {
   id          String   @id @default(uuid()) @db.Uuid
   clave       String   @unique
   nombre      String
-  
-  rol_permisos rol_permisos[]
+
 }
 
 model rol_permisos {
   rol_id     String @db.Uuid
   permiso_id String @db.Uuid
-  
-  rol     roles   @relation(fields: [rol_id], references: [id])
-  permiso permisos @relation(fields: [permiso_id], references: [id])
-  
+
+
   @@id([rol_id, permiso_id])
 }
 
 model usuario_roles {
   usuario_id String @db.Uuid
   rol_id     String @db.Uuid
-  
-  usuario usuarios @relation(fields: [usuario_id], references: [id])
-  rol     roles   @relation(fields: [rol_id], references: [id])
-  
+
+
   @@id([usuario_id, rol_id])
 }
 
@@ -85,12 +77,11 @@ model sesiones {
   usuario_id   String   @db.Uuid
   refresh_hash String
   user_agent   String?
-  ip           String?  @db.Inet
+  ip           String?  @db.Text
   expira_en    DateTime @db.Timestamptz()
   revocada_en  DateTime? @db.Timestamptz()
   created_at   DateTime @default(now()) @db.Timestamptz()
-  
-  usuario usuarios @relation(fields: [usuario_id], references: [id])
+
 }
 
 model periodos {
@@ -101,9 +92,8 @@ model periodos {
   fecha_fin       DateTime @db.Date
   estado          String   @default("activo")
   created_at      DateTime @default(now()) @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  
+
+
   @@index([institucion_id])
 }
 
@@ -113,9 +103,8 @@ model grupos {
   nombre          String
   nivel           String?
   created_at      DateTime @default(now()) @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  
+
+
   @@unique([institucion_id, nombre])
   @@index([institucion_id])
 }
@@ -123,10 +112,8 @@ model grupos {
 model grupo_alumnos {
   grupo_id  String @db.Uuid
   alumno_id String @db.Uuid
-  
-  grupo     grupos    @relation(fields: [grupo_id], references: [id])
-  alumno    usuarios  @relation(fields: [alumno_id], references: [id])
-  
+
+
   @@id([grupo_id, alumno_id])
 }
 
@@ -141,12 +128,8 @@ model materias {
   ponderaciones_ok  Boolean  @default(false)
   created_at        DateTime @default(now()) @db.Timestamptz()
   updated_at        DateTime @updatedAt @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  periodo      periodos    @relation(fields: [periodo_id], references: [id])
-  grupo        grupos      @relation(fields: [grupo_id], references: [id])
-  docente      usuarios    @relation(fields: [docente_id], references: [id])
-  
+
+
   @@index([institucion_id])
   @@index([docente_id])
   @@index([periodo_id])
@@ -156,9 +139,8 @@ model ponderaciones_materia {
   materia_id String  @db.Uuid
   tipo       String
   peso       Decimal @db.Decimal(5, 2)
-  
-  materia materias @relation(fields: [materia_id], references: [id])
-  
+
+
   @@id([materia_id, tipo])
 }
 
@@ -168,10 +150,8 @@ model inscripciones {
   alumno_id   String   @db.Uuid
   estado      String   @default("activa")
   created_at  DateTime @default(now()) @db.Timestamptz()
-  
-  materia materias @relation(fields: [materia_id], references: [id])
-  alumno  usuarios @relation(fields: [alumno_id], references: [id])
-  
+
+
   @@unique([materia_id, alumno_id])
   @@index([materia_id])
   @@index([alumno_id])
@@ -187,29 +167,25 @@ model historial_academico {
   desglose          Json     @default("{}")
   cerrado_por       String?  @db.Uuid
   cerrado_en        DateTime @default(now()) @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  alumno      usuarios     @relation(fields: [alumno_id], references: [id])
-  materia     materias     @relation(fields: [materia_id], references: [id])
-  periodo     periodos     @relation(fields: [periodo_id], references: [id])
-  
+
+
   @@unique([alumno_id, materia_id, periodo_id])
   @@index([alumno_id])
 }
 
 model auditoria {
-  id              BigInt   @id @default(autoincrement())
+  id              Int   @id @default(autoincrement())
   institucion_id  String?  @db.Uuid
   usuario_id      String?  @db.Uuid
   accion          String
   entidad         String?
   entidad_id      String?  @db.Uuid
   resultado       String   @default("ok")
-  ip              String?  @db.Inet
+  ip              String?  @db.Text
   user_agent      String?
   metadata        Json     @default("{}")
   created_at      DateTime @default(now()) @db.Timestamptz()
-  
+
   @@index([institucion_id, created_at])
   @@index([accion, created_at])
 }
@@ -230,10 +206,8 @@ model actividades {
   metadata        Json     @default("{}")
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  materia     materias     @relation(fields: [materia_id], references: [id])
-  
+
+
   @@index([materia_id, estado])
 }
 
@@ -243,10 +217,9 @@ model actividad_adjuntos {
   nombre      String
   storage_key String
   mime        String?
-  tamano_bytes BigInt?
+  tamano_bytes Int?
   created_at  DateTime @default(now()) @db.Timestamptz()
-  
-  actividad actividades @relation(fields: [actividad_id], references: [id])
+
 }
 
 model entregas {
@@ -260,11 +233,8 @@ model entregas {
   entregada_en    DateTime? @db.Timestamptz()
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
-  
-  institucion instituciones @relation(fields: [institucion_id], references: [id])
-  actividad   actividades  @relation(fields: [actividad_id], references: [id])
-  alumno      usuarios     @relation(fields: [alumno_id], references: [id])
-  
+
+
   @@unique([actividad_id, alumno_id])
   @@index([actividad_id, estado])
   @@index([alumno_id])
@@ -278,12 +248,11 @@ model entrega_archivos {
   url_externa   String?
   nombre        String
   mime          String?
-  tamano_bytes  BigInt?
+  tamano_bytes  Int?
   thumbnail_key String?
   created_at    DateTime @default(now()) @db.Timestamptz()
-  
-  entrega entregas @relation(fields: [entrega_id], references: [id])
-  
+
+
   @@index([entrega_id])
 }
 
@@ -294,9 +263,8 @@ model retroalimentacion {
   decision    String
   comentario  String?
   created_at  DateTime @default(now()) @db.Timestamptz()
-  
-  entrega entregas @relation(fields: [entrega_id], references: [id])
-  
+
+
   @@index([entrega_id, created_at])
 }
 
@@ -310,8 +278,7 @@ model calificaciones {
   calificada_por  String   @db.Uuid
   created_at      DateTime @default(now()) @db.Timestamptz()
   updated_at      DateTime @updatedAt @db.Timestamptz()
-  
-  entrega entregas @relation(fields: [entrega_id], references: [id])
-  
+
+
   @@index([alumno_id, actividad_id])
 }
