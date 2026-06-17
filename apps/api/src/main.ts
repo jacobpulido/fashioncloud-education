@@ -36,3 +36,4 @@ if (!process.env.VERCEL) {
   }
   bootstrap();
 }
+// build: fixed rootDirectory
