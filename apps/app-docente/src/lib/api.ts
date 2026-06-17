@@ -44,7 +44,7 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
 
 // Auth
 export async function login(email: string, password: string): Promise<AuthResponse> {
-  const data = await request<AuthResponse>('/api/v1/auth/login', {
+  const data = await request<AuthResponse>('/v1/auth/login', {
     method: 'POST', body: JSON.stringify({ email, password }),
   });
   setToken(data.accessToken);
@@ -53,19 +53,19 @@ export async function login(email: string, password: string): Promise<AuthRespon
 }
 
 export async function register(dto: { email: string; password: string; nombre: string; institucion_id: string }) {
-  return request<AuthResponse>('/api/v1/auth/register', { method: 'POST', body: JSON.stringify(dto) });
+  return request<AuthResponse>('/v1/auth/register', { method: 'POST', body: JSON.stringify(dto) });
 }
 
 // Actividades
 export async function getActividades(materiaId: string) {
-  return request<any[]>(`/api/v1/actividades/materia/${materiaId}`);
+  return request<any[]>(`/v1/actividades/materia/${materiaId}`);
 }
 
 export async function getActividad(id: string) {
-  return request<any>(`/api/v1/actividades/materia/${id}/detalle`);
+  return request<any>(`/v1/actividades/materia/${id}/detalle`);
 }
 
 // Materias
 export async function getMisMaterias() {
-  return request<any[]>('/api/v1/materias');
+  return request<any[]>('/v1/materias');
 }
