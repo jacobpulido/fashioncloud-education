@@ -1,0 +1,16 @@
+-- ============================================================================
+-- FashionCloud Education — Esquema de base de datos (PostgreSQL 16+)
+-- ============================================================================
+-- Schema completo en: https://www.notion.so/FashionCloud-Education-3826d2e6115881ae9d3eebda6deead07
+-- O consultar el repositorio original en la sesión de Telegram del 16-jun-2026
+--
+-- Resumen de entidades:
+-- core.instituciones, core.usuarios, core.roles, core.permisos, core.rol_permisos
+-- core.sesiones, core.periodos, core.grupos, core.grupo_alumnos, core.materias
+-- core.ponderaciones_materia, core.inscripciones, core.historial_academico
+-- core.auditoria
+-- academico.actividades, academico.actividad_adjuntos, academico.entregas
+-- academico.entrega_archivos, academico.retroalimentacion, academico.calificaciones
+--
+-- Motor de cálculo: academico.calcular_calificacion(p_materia, p_alumno)
+-- RLS por institucion_id con core.set_contexto()
