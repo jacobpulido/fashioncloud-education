@@ -35,3 +35,4 @@ if (!process.env.VERCEL) {
   }
   bootstrap();
 }
+
