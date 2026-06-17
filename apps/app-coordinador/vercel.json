@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "installCommand": "pnpm install",
   "buildCommand": "npx vite build",
   "outputDirectory": "dist",
   "framework": "vite"
