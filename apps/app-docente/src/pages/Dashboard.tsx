@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/AuthContext';
 
 // Sample data matching the prototype
 const COVERS = [
@@ -49,6 +50,7 @@ function ActionTile({ icon, title, desc, color, badge, onClick }: { icon: string
 }
 
 export function Dashboard() {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [view, setView] = useState<'home' | 'revisar' | 'calificar'>('home');
 
@@ -161,6 +163,7 @@ export function Dashboard() {
         <NavItem label="Por revisar" icon="inbox" onClick={() => setView('revisar')} />
         <NavItem label="Calificaciones" icon="award" onClick={() => setView('calificar')} />
         <div className="nav-spacer" />
+        <NavItem label="Cerrar sesión" icon="home" onClick={() => { logout(); navigate('/login'); }} />
       </aside>
 
       {/* Main */}
@@ -169,7 +172,7 @@ export function Dashboard() {
           <div>
             <div className="chip chip-magenta" style={{ marginBottom: 4 }}>Otoño 2026</div>
             <h1 className="serif">
-              {view === 'home' ? 'Hola, Mariana' : view === 'revisar' ? 'Por revisar' : 'Calificaciones'}
+              {view === 'home' ? `Hola, ${user?.nombre || 'Mariana'}` : view === 'revisar' ? 'Por revisar' : 'Calificaciones'}
             </h1>
           </div>
           {view === 'home' && (

@@ -11,7 +11,12 @@ const KPIS = [
   { label: 'Avance de calificacion', value: '62%', color: '#0E9E6E', wash: '#DFF3EB' },
 ];
 
+import { useAuth } from '../lib/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
 export function Panel() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="shell">
       <aside className="side">
@@ -24,6 +29,7 @@ export function Panel() {
           <span>Panel general</span>
         </button>
         <div className="nav-spacer" />
+        <button onClick={() => { logout(); navigate('/login'); }} style={{background:'none',border:'none',cursor:'pointer',color:'var(--muted)',fontSize:13,padding:'8px 16px',textAlign:'left',width:'100%'}}>Cerrar sesión</button>
         <div className="nav-group">Centro de Diseno de Modas</div>
       </aside>
       <div className="main">
