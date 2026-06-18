@@ -9,8 +9,8 @@ export default async function HomePage() {
 
   const rol = user.user_metadata?.rol;
 
-  if (rol === "alumno") redirect("/alumno/pendientes");
-  redirect("/docente/dashboard");
+  if (rol === "alumno") redirect("/pendientes");
+  redirect("/dashboard");
 
   return null;
 }

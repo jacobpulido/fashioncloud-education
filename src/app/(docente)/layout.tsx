@@ -31,25 +31,25 @@ export default async function DocenteLayout({
 
         <nav className="space-y-1">
           <Link
-            href="/docente/dashboard"
+            href="/dashboard"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"
           >
             <span>Dashboard</span>
           </Link>
           <Link
-            href="/docente/materias"
+            href="/materias"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"
           >
             <span>Materias</span>
           </Link>
           <Link
-            href="/docente/actividades"
+            href="/actividades"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"
           >
             <span>Actividades</span>
           </Link>
           <Link
-            href="/docente/carga-rapida"
+            href="/carga-rapida"
             className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"
           >
             <span>Carga rápida</span>
