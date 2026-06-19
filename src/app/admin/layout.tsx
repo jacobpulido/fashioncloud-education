@@ -7,26 +7,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  // Check if user has admin role
+  const { data: roles } = await supabase
+    .from("miembros_institucion")
+    .select("rol")
+    .eq("usuario_id", user.id);
+
+  const isAdmin = roles?.some(r => r.rol === "admin_plantel" || r.rol === "coordinador");
+  if (!isAdmin) redirect("/dashboard");
+
   const nombre = user.user_metadata?.nombre || "Admin";
-  let instNombre = "";
-
-  // Fetch institution info
-  try {
-    const { data: membres } = await supabase
-      .from("miembros_institucion")
-      .select("institucion_id")
-      .eq("usuario_id", user.id)
-      .limit(1);
-
-    if (membres && membres.length > 0) {
-      const { data: inst } = await supabase
-        .from("instituciones")
-        .select("nombre")
-        .eq("id", membres[0].institucion_id)
-        .single();
-      instNombre = inst?.nombre || "";
-    }
-  } catch (e) {}
 
   return (
     <div className="flex min-h-screen">
@@ -35,7 +25,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <p className="text-xs font-semibold uppercase tracking-widest text-white/40">FashionCloud</p>
           <p className="text-lg font-bold text-white">Education</p>
           <p className="mt-0.5 text-xs text-white/50">{nombre}</p>
-          <p className="text-xs text-white/30">{instNombre}</p>
         </div>
         <nav className="space-y-1">
           <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
@@ -45,10 +34,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <span>Miembros</span>
           </Link>
         </nav>
-        <div className="absolute bottom-6 left-4 right-4 space-y-2 border-t border-white/10 pt-4">
-          <a href="/dashboard"
-            className="block rounded-md px-3 py-2 text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
-            ← Ver como docente
+        <div className="absolute bottom-6 left-4 right-4 border-t border-white/10 pt-4">
+          <a href="/dashboard" className="block rounded-md px-3 py-2 text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
+            ← Vista docente
           </a>
           <form action="/auth/salir" method="post">
             <button type="submit" className="w-full rounded-md px-3 py-2 text-left text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
