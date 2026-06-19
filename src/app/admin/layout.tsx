@@ -33,11 +33,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
             <span>Dashboard</span>
           </Link>
-          <Link href="/admin/miembros" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
+          <Link href="/admin/miembros" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"> className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
             <span>Miembros</span>
           </Link>
         </nav>
-        <div className="absolute bottom-6 left-4 right-4 border-t border-white/10 pt-4">
+        <div className="absolute bottom-6 left-4 right-4 space-y-2 border-t border-white/10 pt-4">
+          <a href="/dashboard"
+            className="block rounded-md px-3 py-2 text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
+            ← Ver como docente
+          </a>
           <form action="/auth/salir" method="post">
             <button type="submit" className="w-full rounded-md px-3 py-2 text-left text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
               Cerrar sesión

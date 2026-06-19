@@ -9,14 +9,15 @@ export default async function HomePage() {
 
   const rol = user.user_metadata?.rol;
 
-  // Check if admin/coordinador
-  const { data: miembro } = await supabase
+  // Check if admin/coordinador (user may have multiple roles)
+  const { data: miembros } = await supabase
     .from("miembros_institucion")
     .select("rol")
-    .eq("usuario_id", user.id)
-    .single();
+    .eq("usuario_id", user.id);
 
-  if (miembro && ["admin_plantel", "coordinador"].includes(miembro.rol)) redirect("/admin/dashboard");
+  const roles = (miembros || []).map(m => m.rol);
+
+  if (roles.includes("admin_plantel") || roles.includes("coordinador")) redirect("/admin/dashboard");
   if (rol === "alumno") redirect("/alumno/pendientes");
   redirect("/dashboard");
 

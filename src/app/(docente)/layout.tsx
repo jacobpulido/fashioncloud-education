@@ -57,7 +57,11 @@ export default async function DocenteLayout({
           </Link>
         </nav>
 
-        <div className="absolute bottom-6 left-4 right-4 border-t border-white/10 pt-4">
+        <div className="absolute bottom-6 left-4 right-4 space-y-2 border-t border-white/10 pt-4">
+          <a href="/admin/dashboard"
+            className="block rounded-md px-3 py-2 text-sm text-white/40 transition hover:bg-white/5 hover:text-white/70">
+            Ir al admin →
+          </a>
           <form action="/auth/salir" method="post">
             <button
               type="submit"
