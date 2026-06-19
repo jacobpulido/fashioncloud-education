@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useActionState } from "react";
+import { useState, useRef, useActionState } from "react";
 import { procesarConIA, guardarMateria, type CargaRapidaState } from "@/lib/actions/carga-rapida";
-import type { CursoGenerado, Unidad } from "@/lib/deepseek";
+import type { CursoGenerado } from "@/lib/deepseek";
 import {
   FileText,
   ClipboardPaste,
@@ -12,9 +11,7 @@ import {
   Check,
   ChevronLeft,
   Plus,
-  Trash2,
-  GripVertical,
-} from "lucide-react";
+  Trash2} from "lucide-react";
 
 type Modo = "elegir" | "plantilla" | "pegar" | "archivo";
 
@@ -24,7 +21,7 @@ export default function CargaRapidaPage() {
   const [archivoNombre, setArchivoNombre] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [state, formAction, isPending] = useActionState(procesarConAI, {
+  const [state, formAction, isPending] = useActionState(procesarConIA, {
     status: "idle",
   } as CargaRapidaState);
 
@@ -529,7 +526,7 @@ function EditorPlan({
 
   function actualizarUnidad(
     idx: number,
-    campo: keyof Unidad,
+    campo: 'unidad' | 'titulo' | 'temas' | 'semanas' | 'actividades_sugeridas',
     valor: any
   ) {
     const plan = [...curso.plan_estudios];
