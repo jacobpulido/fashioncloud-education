@@ -10,11 +10,18 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   // Check if user has admin_plantel or coordinador role
   const { data: miembros } = await supabase
     .from("miembros_institucion")
-    .select("rol, institucion_id, instituciones!inner(nombre)")
+    .select("rol, institucion_id")
     .eq("usuario_id", user.id);
 
   const adminRole = (miembros || []).find(m => ["admin_plantel", "coordinador"].includes(m.rol));
   if (!adminRole) redirect("/dashboard");
+
+  // Get institution name
+  const { data: inst } = await supabase
+    .from("instituciones")
+    .select("nombre")
+    .eq("id", adminRole.institucion_id)
+    .single();
 
   const nombre = user.user_metadata?.nombre || "Admin";
 
@@ -25,7 +32,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <p className="text-xs font-semibold uppercase tracking-widest text-white/40">FashionCloud</p>
           <p className="text-lg font-bold text-white">Education</p>
           <p className="mt-0.5 text-xs text-white/50">{nombre}</p>
-          <p className="text-xs text-white/30">{(adminRole.instituciones as any)?.nombre}</p>
+          <p className="text-xs text-white/30">{inst?.nombre || ""}</p>
         </div>
         <nav className="space-y-1">
           <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">

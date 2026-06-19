@@ -9,18 +9,23 @@ export default async function AdminDashboard() {
 
   const { data: miembros } = await supabase
     .from("miembros_institucion")
-    .select("institucion_id, instituciones!inner(nombre)")
+    .select("rol, institucion_id")
     .eq("usuario_id", user.id);
 
-  const adminRole = (miembros || []).find(m => ["admin_plantel", "coordinador"].includes((m as any).rol));
+  const adminRole = (miembros || []).find(m => ["admin_plantel", "coordinador"].includes(m.rol));
   if (!adminRole) redirect("/dashboard");
 
+  const { data: inst } = await supabase
+    .from("instituciones")
+    .select("nombre")
+    .eq("id", adminRole.institucion_id)
+    .single();
+
   const stats = await getStatsAdmin(adminRole.institucion_id);
-  const inst = adminRole.instituciones as any;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900">{inst.nombre}</h1>
+      <h1 className="text-2xl font-bold text-gray-900">{inst?.nombre || "Admin"}</h1>
       <p className="mt-1 text-sm text-gray-500">Panel de administración</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
