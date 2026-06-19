@@ -11,7 +11,7 @@ export default async function MateriasPage() {
   if (!user) return null;
 
   const { data: materias } = await supabase
-    .from("materias")
+    .from("materias_carga")
     .select("id, nombre, descripcion, color, estado, created_at")
     .eq("docente_id", user.id)
     .order("created_at", { ascending: false });

@@ -46,7 +46,7 @@ export async function guardarMateria(data: MateriaData): Promise<{ ok: boolean; 
 
   if (!user) return { ok: false, error: "No autenticado" };
 
-  const { error } = await supabase.from("materias").insert({
+  const { error } = await supabase.from("materias_carga").insert({
     docente_id: user.id,
     nombre: data.nombre,
     descripcion: data.descripcion,
@@ -71,7 +71,7 @@ export async function listarMaterias() {
   if (!user) return [];
 
   const { data } = await supabase
-    .from("materias")
+    .from("materias_carga")
     .select("id, nombre, descripcion, color, estado, created_at")
     .eq("docente_id", user.id)
     .order("created_at", { ascending: false });

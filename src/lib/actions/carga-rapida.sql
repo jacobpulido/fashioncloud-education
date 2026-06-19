@@ -1,8 +1,7 @@
--- ── Tabla: materias ────────────────────────────────────────────
--- Tabla simple para el MVP de Carga Rápida
--- Funciona con Supabase Auth (docente_id → auth.users)
+-- Tabla independiente para Carga Rápida
+-- (no conflict with existing old-schema materias table)
 
-CREATE TABLE IF NOT EXISTS public.materias (
+CREATE TABLE IF NOT EXISTS public.materias_carga (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   docente_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   nombre text NOT NULL,
@@ -15,46 +14,31 @@ CREATE TABLE IF NOT EXISTS public.materias (
   updated_at timestamptz NOT NULL DEFAULT now()
 );
 
--- Índices
-CREATE INDEX IF NOT EXISTS ix_materias_docente
-  ON public.materias(docente_id);
+CREATE INDEX IF NOT EXISTS ix_materias_carga_docente ON public.materias_carga(docente_id);
 
--- Trigger updated_at
 CREATE OR REPLACE FUNCTION public.tg_updated_at()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
+RETURNS trigger LANGUAGE plpgsql AS $$
 BEGIN
   NEW.updated_at = now();
   RETURN NEW;
 END;
 $$;
 
-DROP TRIGGER IF EXISTS touch_materias ON public.materias;
-CREATE TRIGGER touch_materias
-  BEFORE UPDATE ON public.materias
+DROP TRIGGER IF EXISTS touch_materias_carga ON public.materias_carga;
+CREATE TRIGGER touch_materias_carga
+  BEFORE UPDATE ON public.materias_carga
   FOR EACH ROW EXECUTE FUNCTION public.tg_updated_at();
 
--- Row Level Security
-ALTER TABLE public.materias ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.materias_carga ENABLE ROW LEVEL SECURITY;
 
--- Política: docentes solo ven sus propias materias
-CREATE POLICY materias_docente_select ON public.materias
-  FOR SELECT
-  USING (docente_id = auth.uid());
+CREATE POLICY materias_carga_select ON public.materias_carga
+  FOR SELECT USING (docente_id = auth.uid());
+CREATE POLICY materias_carga_insert ON public.materias_carga
+  FOR INSERT WITH CHECK (docente_id = auth.uid());
+CREATE POLICY materias_carga_update ON public.materias_carga
+  FOR UPDATE USING (docente_id = auth.uid());
+CREATE POLICY materias_carga_delete ON public.materias_carga
+  FOR DELETE USING (docente_id = auth.uid());
 
-CREATE POLICY materias_docente_insert ON public.materias
-  FOR INSERT
-  WITH CHECK (docente_id = auth.uid());
-
-CREATE POLICY materias_docente_update ON public.materias
-  FOR UPDATE
-  USING (docente_id = auth.uid());
-
-CREATE POLICY materias_docente_delete ON public.materias
-  FOR DELETE
-  USING (docente_id = auth.uid());
-
--- Dar permisos
-GRANT ALL ON public.materias TO authenticated;
-GRANT ALL ON public.materias TO service_role;
+GRANT ALL ON public.materias_carga TO authenticated;
+GRANT ALL ON public.materias_carga TO service_role;
