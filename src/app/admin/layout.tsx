@@ -33,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
             <span>Dashboard</span>
           </Link>
-          <Link href="/admin/miembros" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10"> className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
+          <Link href="/admin/miembros" className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-white/70 transition hover:bg-white/10">
             <span>Miembros</span>
           </Link>
         </nav>
