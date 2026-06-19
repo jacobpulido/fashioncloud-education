@@ -8,15 +8,14 @@ export default async function AdminMiembros() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: miembros } = await supabase
+  const { data: membres } = await supabase
     .from("miembros_institucion")
-    .select("institucion_id, rol")
+    .select("rol, institucion_id")
     .eq("usuario_id", user.id);
 
-  const adminRole = (miembros || []).find(m => ["admin_plantel", "coordinador"].includes(m.rol));
+  const adminRole = (membres || []).find(m => m.rol === "admin_plantel" || m.rol === "coordinador");
   if (!adminRole) redirect("/dashboard");
 
   const lista = await listMiembros(adminRole.institucion_id);
-
   return <AdminMiembrosClient miembros={lista} institucionId={adminRole.institucion_id} />;
 }
