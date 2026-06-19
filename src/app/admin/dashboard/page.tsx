@@ -1,43 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export default function AdminDashboardPage() {
-  const [msg, setMsg] = useState("Verificando...");
+export default function Page() {
+  const [msg, setMsg] = useState("...");
 
   useEffect(() => {
-    (async () => {
-      try {
-        const supabase = createClient();
-        const { data: { user }, error: ue } = await supabase.auth.getUser();
-        if (ue || !user) { setMsg("No auth: " + (ue?.message || "")); return; }
-
-        const { data: rows, error: qe } = await supabase
-          .from("miembros_institucion")
-          .select("rol")
-          .eq("usuario_id", user.id);
-
-        if (qe) { setMsg("Query error: " + qe.message); return; }
-
-        const roles = (rows || []).map(r => r.rol);
-        setMsg("User: " + user.email + " | Roles: " + (roles.join(", ") || "ninguno"));
-
-        if (roles.includes("admin_plantel") || roles.includes("coordinador")) {
-          setMsg("✅ Admin OK");
-        } else {
-          setMsg("❌ No eres admin. Roles: " + (roles.join(", ") || "ninguno"));
-        }
-      } catch (e: any) {
-        setMsg("Error: " + e.message);
-      }
-    })();
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      if (user) createClient().from("miembros_institucion").select("rol").eq("usuario_id", user.id).then(({ data }) => {
+        setMsg(`User: ${user.email}, Roles: ${(data||[]).map(r=>r.rol).join(",") || "none"}`);
+      });
+    });
   }, []);
 
-  return <div style={{ padding: 40, fontFamily: "system-ui" }}>
-    <h1>Admin Dashboard</h1>
-    <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 8 }}>{msg}</pre>
-    <a href="/dashboard" style={{ color: "#6366f1" }}>← Volver</a>
+  return <div style={{padding:40,fontFamily:"system-ui",background:"#0b1120",color:"white",minHeight:"100vh"}}>
+    <h1>ADMIN PAGE v3</h1>
+    <pre id="debug">{msg}</pre>
+    <a href="/dashboard" style={{color:"#6366f1"}}>← Dashboard</a>
   </div>;
 }
