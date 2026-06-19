@@ -9,6 +9,14 @@ export default async function HomePage() {
 
   const rol = user.user_metadata?.rol;
 
+  // Check if admin/coordinador
+  const { data: miembro } = await supabase
+    .from("miembros_institucion")
+    .select("rol")
+    .eq("usuario_id", user.id)
+    .single();
+
+  if (miembro && ["admin_plantel", "coordinador"].includes(miembro.rol)) redirect("/admin/dashboard");
   if (rol === "alumno") redirect("/alumno/pendientes");
   redirect("/dashboard");
 
