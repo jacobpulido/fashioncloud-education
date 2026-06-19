@@ -165,7 +165,7 @@ export default function ActividadesPage() {
       ) : (
         <div className="mt-6 space-y-3">
           {actividades.map(a => (
-            <div key={a.id} className="rounded-xl border bg-white p-4 transition hover:shadow-sm">
+            <div key={a.id} onClick={() => window.location.href="/actividades/" + encodeURIComponent(a.id)} className="rounded-xl border bg-white p-4 transition hover:shadow-sm cursor-pointer">
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <span className="text-lg mt-0.5">{tipoIcon[a.tipo] || "📝"}</span>
