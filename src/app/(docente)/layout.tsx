@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { MobileNav } from "./mobile-nav";
 
 export default async function DocenteLayout({
   children,
@@ -68,9 +69,11 @@ export default async function DocenteLayout({
         </div>
       </aside>
 
+      <MobileNav nombre={user.user_metadata?.nombre} />
+
       {/* Main content */}
       <div className="flex-1 lg:pl-64">
-        <main className="min-h-screen bg-gray-50 px-6 py-8">{children}</main>
+        <main className="min-h-screen bg-gray-50 px-6 py-8 lg:pt-8 pt-20">{children}</main>
       </div>
     </div>
   );
