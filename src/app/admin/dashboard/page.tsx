@@ -7,16 +7,16 @@ export default async function AdminDashboard() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: miembro } = await supabase
+  const { data: miembros } = await supabase
     .from("miembros_institucion")
     .select("institucion_id, instituciones!inner(nombre)")
-    .eq("usuario_id", user.id)
-    .single();
+    .eq("usuario_id", user.id);
 
-  if (!miembro) redirect("/dashboard");
+  const adminRole = (miembros || []).find(m => ["admin_plantel", "coordinador"].includes((m as any).rol));
+  if (!adminRole) redirect("/dashboard");
 
-  const stats = await getStatsAdmin(miembro.institucion_id);
-  const inst = miembro.instituciones as any;
+  const stats = await getStatsAdmin(adminRole.institucion_id);
+  const inst = adminRole.instituciones as any;
 
   return (
     <div>

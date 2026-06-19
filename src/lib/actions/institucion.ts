@@ -17,10 +17,12 @@ export async function getMiembroContext() {
   const { data } = await supabase
     .from("miembros_institucion")
     .select("id, rol, institucion_id, instituciones!inner(nombre, slug)")
-    .eq("usuario_id", user.id)
-    .single();
+    .eq("usuario_id", user.id);
 
-  return data;
+  // Return first match (prefer admin/coordinador)
+  if (!data || data.length === 0) return null;
+  const roles = data as any[];
+  return roles.find(r => ["admin_plantel", "coordinador"].includes(r.rol)) || roles[0];
 }
 
 export async function listMiembros(institucionId: string) {
