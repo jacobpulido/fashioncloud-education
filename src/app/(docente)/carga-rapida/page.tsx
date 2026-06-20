@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   Plus,
   Trash2} from "lucide-react";
+import { getFileText } from "@/lib/excel-parser";
 
 type Modo = "elegir" | "plantilla" | "pegar" | "archivo";
 
@@ -432,18 +433,12 @@ function PantallaArchivo({
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
     setArchivoNombre(file.name);
-
-    // Solo texto plano por ahora
-    if (file.type === "text/plain") {
-      const text = await file.text();
+    try {
+      const text = await getFileText(file);
       setTexto(text);
-    } else {
-      // Para .docx, .pdf — mostrar mensaje
-      setTexto(
-        `[Archivo: ${file.name}]\n\nNota: La extracción automática de ${file.type || "este formato"} requiere configuración adicional. Por ahora, copia y pega el contenido manualmente usando el modo "Pegar programa académico".`
-      );
+    } catch (err: any) {
+      setTexto(`[Error: ${err.message}]`);
     }
   }
 
@@ -462,7 +457,7 @@ function PantallaArchivo({
         <input
           ref={fileRef}
           type="file"
-          accept=".txt,.docx,.pdf"
+          accept=".txt,.csv,.xlsx,.xls"
           onChange={handleFile}
           className="hidden"
         />
