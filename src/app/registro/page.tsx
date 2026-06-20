@@ -55,6 +55,16 @@ export default function RegistroPage() {
         usuario_id: user.id,
         rol: rol,
       });
+      
+      // Auto-inscripcion si viene de QR o link de materia
+      const params = new URLSearchParams(window.location.search);
+      const materiaId = params.get("materia");
+      if (materiaId && rol === "alumno") {
+        await supabase.from("inscripciones_carga").upsert({
+          materia_id: materiaId,
+          alumno_id: user.id,
+        }, { onConflict: "materia_id, alumno_id" });
+      }
     }
 
     router.push("/login?registro=exitoso");

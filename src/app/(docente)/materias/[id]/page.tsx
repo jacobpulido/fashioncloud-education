@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MateriaDetailClient, MateriaStatusButton } from "./client";
+import { MateriaDetailClient, MateriaStatusButton, MateriaEnrollment } from "./client";
 
 export default async function MateriaDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -99,6 +99,7 @@ export default async function MateriaDetailPage({ params }: { params: Promise<{ 
       </div>
 
       {/* Estado + Alumnos */}
+      <MateriaEnrollment materiaId={id} materiaNombre={materia.nombre} />
       <MateriaStatusButton materiaId={id} estadoActual={materia.estado} />
       <MateriaDetailClient materiaId={id} inscritos={inscritos} />
     </div>

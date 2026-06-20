@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { inscribirAlumno, desinscribirAlumno } from "@/lib/actions/inscripciones";
 import { actualizarEstadoMateria } from "@/lib/actions/carga-rapida";
-import { Plus, Trash2, UserPlus, Send, Archive } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
+import { Plus, Trash2, UserPlus, Send, Archive, QrCode, Link, Copy, Check, Mail } from "lucide-react";
 
 // ── Status Button ─────────────────────────────────────────────
 
@@ -48,18 +49,93 @@ export function MateriaStatusButton({ materiaId, estadoActual }: { materiaId: st
   );
 }
 
+// ── QR / Link / Email ──────────────────────────────────────
+
+export function MateriaEnrollment({ materiaId, materiaNombre }: { materiaId: string; materiaNombre: string }) {
+  const [showQR, setShowQR] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailSent, setEmailSent] = useState(false);
+
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://fashioncloud-education.vercel.app";
+  const token = btoa(materiaId + ":" + materiaNombre).replace(/=/g, "");
+  const enrollUrl = `${baseUrl}/api/inscribir?materia_id=${materiaId}&token=${token}`;
+
+  async function copyLink() {
+    await navigator.clipboard.writeText(enrollUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  function handleEmailInvite() {
+    const subject = encodeURIComponent(`Invitación a ${materiaNombre}`);
+    const body = encodeURIComponent(
+      `Te invito a inscribirte en "${materiaNombre}".\n\nAbre este enlace:\n${enrollUrl}\n\nSi no tienes cuenta, regístrate y automáticamente quedarás inscrito.`
+    );
+    window.open(`mailto:${email}?subject=${subject}&body=${body}`, "_blank");
+    setEmailSent(true);
+    setTimeout(() => setEmailSent(false), 3000);
+  }
+
+  return (
+    <div className="mt-6 rounded-xl border bg-white p-6">
+      <h2 className="text-lg font-semibold text-gray-900">Invitar alumnos</h2>
+      <p className="mt-1 text-sm text-gray-500">Comparte el acceso a esta materia</p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {/* QR */}
+        <button onClick={() => setShowQR(!showQR)}
+          className="flex flex-col items-center gap-2 rounded-lg border-2 border-gray-200 p-4 transition hover:border-[#0b1120] hover:bg-gray-50">
+          <QrCode size={24} className="text-[#0b1120]" />
+          <span className="text-sm font-medium text-gray-700">Código QR</span>
+          <span className="text-xs text-gray-400">Escanea para inscribirse</span>
+        </button>
+
+        {/* Link */}
+        <button onClick={copyLink}
+          className="flex flex-col items-center gap-2 rounded-lg border-2 border-gray-200 p-4 transition hover:border-[#0b1120] hover:bg-gray-50">
+          {copied ? <Check size={24} className="text-green-600" /> : <Link size={24} className="text-[#0b1120]" />}
+          <span className="text-sm font-medium text-gray-700">{copied ? "¡Copiado!" : "Link de acceso"}</span>
+          <span className="text-xs text-gray-400">Copiar enlace para compartir</span>
+        </button>
+
+        {/* Email */}
+        <div className="flex flex-col items-center gap-2 rounded-lg border-2 border-gray-200 p-4">
+          <Mail size={24} className="text-[#0b1120]" />
+          <span className="text-sm font-medium text-gray-700">Invitación por email</span>
+          <div className="flex w-full gap-1">
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+              placeholder="alumno@email.com"
+              className="min-w-0 flex-1 rounded border border-gray-300 px-2 py-1 text-xs" />
+            <button onClick={handleEmailInvite} disabled={!email.includes("@")}
+              className="shrink-0 rounded bg-[#0b1120] px-2 py-1 text-xs text-white disabled:opacity-50">
+              {emailSent ? "✓" : "Enviar"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showQR && (
+        <div className="mt-4 flex flex-col items-center gap-2 rounded-lg bg-gray-50 p-6">
+          <QRCodeSVG value={enrollUrl} size={180} level="M" />
+          <p className="text-xs text-gray-400">Escanea con la cámara del teléfono</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Alumnos Inscription ──────────────────────────────────────
 
 export function MateriaDetailClient({ materiaId, inscritos }: { materiaId: string; inscritos: string[] }) {
   const [alumnos, setAlumnos] = useState<any[]>([]);
   const [selected, setSelected] = useState("");
   const [localInscritos, setLocalInscritos] = useState(inscritos);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/alumnos-list")
       .then(r => r.json())
-      .then(data => { setAlumnos(data); setLoading(false); });
+      .then(data => setAlumnos(data));
   }, []);
 
   async function handleInscribir() {
