@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { MonitoringProvider } from "@/components/providers/monitoring-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,7 +52,11 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <MonitoringProvider>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </MonitoringProvider>
         {/* Register service worker */}
         <script dangerouslySetInnerHTML={{
           __html: `
